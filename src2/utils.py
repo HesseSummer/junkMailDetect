@@ -2,13 +2,6 @@ import re
 from nltk import word_tokenize, pos_tag
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
-import pickle
-import os
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import classification_report
-import matplotlib.pyplot as plt
-from sklearn.metrics import roc_curve, auc
-
 """
 从文本到文本，使用正则去除标点、缩写、html符号
 """
@@ -65,47 +58,14 @@ def preprocess(text):
     return tokens  ## 返回的是单词列表
 
 
-"""格式转化"""
-"""将y_val转为y_val_label"""
-# y_val[0:3]示例：[[0. 1.]
-#                 [1. 0.]
-#                 [1. 0.]]
-# y_val_label[0:3]示例：['spam' 'ham' 'ham']
-def TOy_val_label(y_val):
-    y_val_label = []
-    spam = np.array([0., 1.]) ## [0 1]表示垃圾邮件？
-    ham = np.array([1., 0.]) ## [1 0]表示正常邮件
-    for line in y_val:
-        if all(line == spam):
-            y_val_label.append("spam")
-        else:
-            y_val_label.append("ham")
-    
-    y_val_label = np.array(y_val_label)
-    return y_val_label
-"""将y_pred转为y_pred_label"""
-# y_pred[0:3]示例：[[9.9905199e-01 9.4802002e-04]
-#                  [9.8692465e-01 1.3075325e-02]
-#                  [1.0000000e+00 0.0000000e+00]]
-# y_pred_label[0:3]示例：['ham' 'ham' 'ham']
-def TOy_pred_label(y_pred):
-    y_pred_label = []
-    y_pred_index = np.argmax(y_pred, axis=1)
-
-    for line in y_pred_index:
-        if line == 0:
-            y_pred_label.append("ham")
-        else:
-            y_pred_label.append("spam")
-    
-    y_pred_label = np.array(y_pred_label)
-    return y_pred_label
-
 # 模型部分
 #
 #
 
-
+import pickle
+import os
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
 
 def saveModel(clf, name, config):
     base_path = config['base_path']
@@ -133,6 +93,8 @@ def getModel(name, config):
 #
 
 
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_curve, auc
 
 def showModel(y_test, y_pred, name):
     cm = confusion_matrix(y_test, y_pred)

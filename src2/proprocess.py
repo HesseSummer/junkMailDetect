@@ -28,16 +28,12 @@ def cleanData(raw_data):
     logging('预处理后的标签示例', sms_label[0:3])
     return sms_text, sms_label
 
-def tokenize(sms_text):
+def categorical(sms_text, sms_label):
     MAX_NUM_WORDS = 2000
     tokenizer = Tokenizer(num_words=MAX_NUM_WORDS) ## 最终选取频率前MAX_NUM_WORDS个单词
-    tokenizer.fit_on_texts(sms_text)
-    return tokenizer
-
-def categorical(sms_text, sms_label):
+    tokenizer.fit_on_texts(sms_data)
     MAX_SEQUENCE_LENGTH = 50 ## 长度超过MAX_SEQUENCE_LENGTH则截断，不足则补0
-    tokenizer=tokenize(sms_text)
-    sequences = tokenizer.texts_to_sequences(sms_text) ## 是一个二维数值数组，每一个数值都是对应句子对应单词的**索引**
+    sequences = tokenizer.texts_to_sequences(sms_data) ## 是一个二维数值数组，每一个数值都是对应句子对应单词的**索引**
     dataset = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH) 
     labels = to_categorical(np.asarray(sms_label)) ## 将label转为独热编码形式
 
@@ -55,11 +51,9 @@ def categorical(sms_text, sms_label):
 
     x_val = dataset[size_trainset+1: size_dataset]
     y_val = labels[size_trainset+1: size_dataset]
-    return x_train, y_train, x_val, y_val
+    return x_train, y_train, x_val, y_val, tokenizer
     
-def train_dic(sms_text):
-    MAX_NUM_WORDS = 2000
-    tokenizer=tokenize(sms_text)
+def train_dic(tokenizer):
     embedding_dic = {}
     file_path = '../glove/glove.6B.100d.txt'
 

@@ -1,7 +1,7 @@
 import csv
 import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
 from utils import preprocess, logging
-from keras.layers import Embedding
 
 from keras.utils import to_categorical
 from keras.preprocessing.text import Tokenizer
@@ -19,12 +19,11 @@ def readData(config):
 
 
 def cleanData(raw_data):
-    label_num = {"spam":1, "ham":0}
     sms_text = []
     sms_label = []
     for line in raw_data:
         sms_text.append(" ".join(preprocess(line[1])))
-        sms_label.append(label_num[line[0]])
+        sms_label.append(line[0])
     logging('预处理后的文本示例', sms_text[0:3])
     logging('预处理后的标签示例', sms_label[0:3])
     return sms_text, sms_label
@@ -59,7 +58,6 @@ def categorical(sms_text, sms_label):
     return x_train, y_train, x_val, y_val
     
 def train_dic(sms_text):
-    MAX_SEQUENCE_LENGTH = 50
     MAX_NUM_WORDS = 2000
     tokenizer=tokenize(sms_text)
     embedding_dic = {}
@@ -89,9 +87,4 @@ def train_dic(sms_text):
         embedding_vector = embedding_dic.get(word)
         if embedding_vector is not None: ## 单词在emmbeding_dic中存在时
             embedding_matrix[i] = embedding_vector
-    embedding_layer = Embedding(input_dim=num_words,  # 词汇表单词数量
-                                output_dim=EMBEDDING_DIM,  # 词向量维度
-                                weights=[embedding_matrix],
-                                input_length=MAX_SEQUENCE_LENGTH,
-                                trainable=False)  # 词向量矩阵不进行训练
-    return embedding_layer
+    return embedding_matrix

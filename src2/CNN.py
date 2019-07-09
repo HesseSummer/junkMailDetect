@@ -1,11 +1,16 @@
 from keras.layers import Dense, Input, GlobalMaxPooling1D
-from keras.layers import Conv1D, MaxPooling1D
-from keras.models import Model
+from keras.layers import Conv1D, MaxPooling1D, Embedding
+import preprocess
 
-def CNN(embedding_layer):
+def CNN(embedding_matrix):
+    embedding_matrix=preprocess.train_dic(sms_text)
+    embedding_layer = Embedding(input_dim=num_words,  # 词汇表单词数量
+                                output_dim=EMBEDDING_DIM,  # 词向量维度
+                                weights=[embedding_matrix],
+                                input_length=MAX_SEQUENCE_LENGTH,
+                                trainable=False)  # 词向量矩阵不进行训练
+
     #构建、连接其他层
-    label_num = {"spam":1, "ham":0}
-    MAX_SEQUENCE_LENGTH = 50
     sequence_input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')  # 占位。
     embedded_sequences = embedding_layer(sequence_input)  # 返回 句子个数*50*100
     x = Conv1D(128, 5, activation='relu')(embedded_sequences)

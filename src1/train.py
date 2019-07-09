@@ -1,11 +1,12 @@
 import preprocess
 from config import config
 import models
-from utils import saveModel
+from utils import saveModel, logging
 
 if __name__ == '__main__':
     raw_data = preprocess.readData(config)
     sms_text, sms_label = preprocess.cleanData(raw_data)
+
     x_train, y_train, x_test, y_test = preprocess.vectorize(sms_text, sms_label, config)
 
     clf = models.trainNB(x_train, y_train, x_test, y_test)
@@ -20,4 +21,5 @@ if __name__ == '__main__':
     saveModel(clf, "SGDSVM", config)
     clf = models.trainSGDLog(x_train, y_train, x_test, y_test)
     saveModel(clf, "SDD逻辑回归", config)
+
 

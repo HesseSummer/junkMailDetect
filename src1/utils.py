@@ -81,7 +81,7 @@ def saveModel(clf, name, config):
 
 
 def getModel(name, config):
-    base_path = config['base_config']
+    base_path = config['base_path']
     file_path = os.path.join(base_path, name+'.pkl')
     try:
         with open(file_path, 'rb') as f:
@@ -161,3 +161,24 @@ def printAUCsvm(clf, x_test, y_test):
 def logging(title, content):
     print('-------- {} --------'.format(title))
     print(content)
+
+
+def saveCleanTexts(clean_texts, config):
+    file_path = config['clean_texts_path']
+    with open(file_path, 'wb') as f:
+        pickle.dump(clean_texts, f)
+
+def loadCleanTexts(config):
+    file_path = config['clean_texts_path']
+    with open(file_path, 'rb') as f:
+        return pickle.load(f)
+
+def saveTokenizer(clean_texts, config):
+    file_path = config['tokenizer_path']
+    with open(file_path, 'wb') as f:
+        pickle.dump(clean_texts, f)
+
+def loadTokenizer(config):
+    file_path = config['tokenizer_path']
+    with open(file_path, 'rb') as f:
+        return pickle.load(f)

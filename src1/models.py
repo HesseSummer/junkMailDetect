@@ -9,7 +9,7 @@ import utils
 def trainNB(x_train, y_train, x_test, y_test):
     clf = MultinomialNB().fit(x_train, y_train)
     y_pred = clf.predict(x_test)
-    utils.showModel(y_test, y_pred, "朴素贝叶斯")
+    utils.showModel(y_test, y_pred, "贝叶斯")
     utils.printAUC(clf, x_test, y_test)
     return clf
 

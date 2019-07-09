@@ -1,5 +1,4 @@
 import re
-import numpy as np
 from nltk import word_tokenize, pos_tag
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer

@@ -173,10 +173,10 @@ def loadCleanTexts(config):
     with open(file_path, 'rb') as f:
         return pickle.load(f)
 
-def saveTokenizer(clean_texts, config):
+def saveTokenizer(tokenizer, config):
     file_path = config['tokenizer_path']
     with open(file_path, 'wb') as f:
-        pickle.dump(clean_texts, f)
+        pickle.dump(tokenizer, f)
 
 def loadTokenizer(config):
     file_path = config['tokenizer_path']

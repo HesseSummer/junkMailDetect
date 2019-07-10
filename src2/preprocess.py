@@ -1,6 +1,6 @@
 import csv
 import numpy as np
-from utils import preprocess, logging
+from utils import preprocess, logging, saveTokenizer, loadTokenizer
 from keras.layers import Embedding
 
 from keras.utils import to_categorical
@@ -29,15 +29,16 @@ def cleanData(raw_data):
     logging('预处理后的标签示例', sms_label[0:3])
     return sms_text, sms_label
 
-def tokenize(sms_text):
+def tokenize(sms_text, config):
     MAX_NUM_WORDS = 2000
     tokenizer = Tokenizer(num_words=MAX_NUM_WORDS) ## 最终选取频率前MAX_NUM_WORDS个单词
     tokenizer.fit_on_texts(sms_text)
+    saveTokenizer(tokenizer, config)
     return tokenizer
 
-def categorical(sms_text, sms_label):
+def categorical(sms_text, sms_label, config):
     MAX_SEQUENCE_LENGTH = 50 ## 长度超过MAX_SEQUENCE_LENGTH则截断，不足则补0
-    tokenizer=tokenize(sms_text)
+    tokenizer=tokenize(sms_text, config)
     sequences = tokenizer.texts_to_sequences(sms_text) ## 是一个二维数值数组，每一个数值都是对应句子对应单词的**索引**
     dataset = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH) 
     labels = to_categorical(np.asarray(sms_label)) ## 将label转为独热编码形式
@@ -58,10 +59,10 @@ def categorical(sms_text, sms_label):
     y_val = labels[size_trainset+1: size_dataset]
     return x_train, y_train, x_val, y_val
     
-def train_dic(sms_text):
+def train_dic(sms_text, config):
     MAX_SEQUENCE_LENGTH = 50
     MAX_NUM_WORDS = 2000
-    tokenizer=tokenize(sms_text)
+    tokenizer=tokenize(sms_text, config)
     embedding_dic = {}
     file_path = '../glove/glove.6B.100d.txt'
 
@@ -95,3 +96,22 @@ def train_dic(sms_text):
                                 input_length=MAX_SEQUENCE_LENGTH,
                                 trainable=False)  # 词向量矩阵不进行训练
     return embedding_layer
+
+
+def getInputvec(raw_sentence, config):
+    inputvec = []
+    inputvec.append(" ".join(preprocess(raw_sentence)))
+
+    tokenizer = loadTokenizer(config)
+    sequence = tokenizer.texts_to_sequences(raw_sentence)
+    sequence = sum(sequence, [])
+    new_seq = []
+    new_seq.append(sequence)
+    sequence = new_seq
+
+
+
+    MAX_SEQUENCE_LENGTH = config['MAX_SEQUENCE_LENGTH']
+    inputvec = pad_sequences(sequence, maxlen=MAX_SEQUENCE_LENGTH)
+
+    return inputvec

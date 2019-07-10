@@ -119,7 +119,7 @@ def saveModel(clf, name, config):
 
 
 def getModel(name, config):
-    base_path = config['base_config']
+    base_path = config['base_path']
     file_path = os.path.join(base_path, name+'.pkl')
     try:
         with open(file_path, 'rb') as f:
@@ -171,3 +171,13 @@ def print_AUC(y_val_label, y_pred):
 def logging(title, content):
     print('-------- {} --------'.format(title))
     print(content)
+
+def saveTokenizer(tokenizer, config):
+    file_path = config['tokenizer_path']
+    with open(file_path, 'wb') as f:
+        pickle.dump(tokenizer, f)
+
+def loadTokenizer(config):
+    file_path = config['tokenizer_path']
+    with open(file_path, 'rb') as f:
+        return pickle.load(f)

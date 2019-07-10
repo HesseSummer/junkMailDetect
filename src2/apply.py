@@ -2,7 +2,7 @@
 ## 文本参数
 ## 多模型选择
 import argparse
-from utils import getModel
+from utils import getModel, TOy_pred_label, logging
 from config import config
 from preprocess import getInputvec
 import time
@@ -17,13 +17,19 @@ args = parser.parse_args()
 def judge():
     time.sleep(0.1)
     raw_sentence = args.text
+    # raw_sentence = "K tell me anything about you."
+    inputvec = getInputvec(raw_sentence, config)
 
-    inputvec = getInputvec(raw_sentence)
 
     clf = getModel('CNN', config)
     pred = clf.predict(inputvec)
-    pred = ''.join(pred)
-    if pred == 'ham':
+
+    pred_label = TOy_pred_label(pred)
+
+    pred_label = pred_label.tolist()
+    result = "".join(pred_label)
+
+    if result == 'ham':
         result = '正常邮件'
     else:
         result = '垃圾邮件'
